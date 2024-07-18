@@ -268,41 +268,43 @@
 
 <!-- Surfly Integration Script -->
 <script>
-    (function(s,u,r,f,l,y){s[f]=s[f]||{init:function(){s[f].q=arguments}};
-    l=u.createElement(r);y=u.getElementsByTagName(r)[0];l.async=1;
-    l.src='https://surfly.com/surfly.js';y.parentNode.insertBefore(l,y);})
-    (window,document,'script','Surfly');
+    document.addEventListener("DOMContentLoaded", function() {
+        (function(s,u,r,f,l,y){s[f]=s[f]||{init:function(){s[f].q=arguments}};
+        l=u.createElement(r);y=u.getElementsByTagName(r)[0];l.async=1;
+        l.src='https://surfly.com/surfly.js';y.parentNode.insertBefore(l,y);})
+        (window,document,'script','Surfly');
 
-    Surfly.init({
-        widget_key: "fe28bd8530f9490d945225ea6985e195",
-        hide_support_button_when_unavailable: false,
-        support_button_position: 'bottomleft'
-    }, function(initResult) {
-        console.log("Initialization result: ", initResult);
-        if (initResult.success) {
-            console.log('Surfly initialized successfully');
-        } else {
-            console.log("Surfly was unable to initialize properly:", initResult.errorMsg);
-        }
-    });
-
-    document.getElementById("surfly-btn").onclick = function() {
-        document.querySelector(".popup-overlay").style.display = "block";
-        document.querySelector(".popup").style.display = "block";
-    };
-
-    document.getElementById("popup-ok-btn").onclick = function() {
-        document.querySelector(".popup-overlay").style.display = "none";
-        document.querySelector(".popup").style.display = "none";
-        console.log("Starting Surfly session...");
-        Surfly.session().startLeader().then(function(session) {
-            console.log("Surfly session started:", session);
-        }).catch(function(error) {
-            console.error("Error starting Surfly session:", error);
-            console.error("Error details: ", error.details);
-            console.error("Error reason: ", error.reason);
+        Surfly.init({
+            widget_key: "fe28bd8530f9490d945225ea6985e195",
+            hide_support_button_when_unavailable: false,
+            support_button_position: 'bottomleft'
+        }, function(initResult) {
+            console.log("Initialization result: ", initResult);
+            if (initResult.success) {
+                console.log('Surfly initialized successfully');
+            } else {
+                console.log("Surfly was unable to initialize properly:", initResult.errorMsg);
+            }
         });
-    };
+
+        document.getElementById("surfly-btn").onclick = function() {
+            document.querySelector(".popup-overlay").style.display = "block";
+            document.querySelector(".popup").style.display = "block";
+        };
+
+        document.getElementById("popup-ok-btn").onclick = function() {
+            document.querySelector(".popup-overlay").style.display = "none";
+            document.querySelector(".popup").style.display = "none";
+            console.log("Starting Surfly session...");
+            Surfly.session().startLeader().then(function(session) {
+                console.log("Surfly session started:", session);
+            }).catch(function(error) {
+                console.error("Error starting Surfly session:", error);
+                console.error("Error details: ", error.details);
+                console.error("Error reason: ", error.reason);
+            });
+        };
+    });
 </script>
 
 </body>
