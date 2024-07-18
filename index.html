@@ -111,39 +111,31 @@
         .popup {
             display: none;
             position: fixed;
-            z-index: 999;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
-            text-align: center;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            z-index: 1000;
         }
         .popup-content {
-            background-color: #fff;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 300px;
-            border-radius: 8px;
+            text-align: center;
         }
-        .popup button {
+        .popup-content p {
+            margin-bottom: 20px;
+        }
+        .popup-content button {
             background-color: #007bff;
-            color: white;
+            color: #fff;
             padding: 10px 20px;
             border: none;
             cursor: pointer;
             border-radius: 4px;
         }
-        .popup button:hover {
+        .popup-content button:hover {
             background-color: #0056b3;
-        }
-        .pin-display {
-            font-size: 24px;
-            font-weight: bold;
-            margin-top: 20px;
         }
     </style>
 </head>
@@ -214,9 +206,6 @@
 
         <button type="submit" class="btn">Submit Application</button>
     </form>
-
-    <!-- Custom Surfly button -->
-    <button class="btn" id="surfly-btn">Get Live Help</button>
 </div>
 
 <div class="container contact-us">
@@ -277,15 +266,11 @@
         console.log("Initialization result: ", initResult);
         if (initResult.success) {
             console.log('Surfly initialized successfully');
+            // The Surfly button will appear by default
         } else {
             console.log("Surfly was unable to initialize properly:", initResult.errorMsg);
         }
     });
-
-    document.getElementById("surfly-btn").onclick = function() {
-        console.log("Starting Surfly session...");
-        document.getElementById("popup").style.display = "block";
-    };
 
     document.getElementById("confirm-btn").onclick = function() {
         document.getElementById("popup").style.display = "none";
@@ -297,6 +282,19 @@
             console.error("Error reason: ", error.reason);
         });
     };
+
+    Surfly.on('session_pin', function(api, event) {
+        console.log('PIN code:', event.pin);
+    });
+
+    Surfly.on('session_started', function(api, event) {
+        if (Surfly.isInsideSession) {
+            Surfly.currentSession.on('session_pin', function(session, event) {
+                // Display the PIN only to the customer
+                alert('Please read this PIN code to your agent: ' + event.pin);
+            });
+        }
+    });
 </script>
 
 </body>
