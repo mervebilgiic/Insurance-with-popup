@@ -108,6 +108,45 @@
         a:hover {
             text-decoration: underline;
         }
+        /* Popup styles */
+        .popup {
+            display: none;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            z-index: 1000;
+        }
+        .popup-content {
+            margin-bottom: 15px;
+        }
+        .popup .btn {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .popup .btn:hover {
+            background-color: #0056b3;
+        }
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
     </style>
 </head>
 <body>
@@ -177,9 +216,6 @@
 
         <button type="submit" class="btn">Submit Application</button>
     </form>
-
-    <!-- Add the custom Surfly button here -->
-    <button class="btn" id="surfly-btn">Get Live Help</button>
 </div>
 
 <div class="container contact-us">
@@ -218,6 +254,15 @@
     <p>&copy; 2024 Insurance Company. All rights reserved.</p>
 </div>
 
+<!-- Popup and overlay elements -->
+<div class="popup-overlay"></div>
+<div class="popup">
+    <div class="popup-content">
+        <p>Please read and accept the following before starting the session.</p>
+    </div>
+    <button class="btn" id="popup-ok-btn">OK</button>
+</div>
+
 <!-- Surfly Integration Script -->
 <script>
     (function(s,u,r,f,l,y){s[f]=s[f]||{init:function(){s[f].q=arguments}};
@@ -225,30 +270,36 @@
     l.src='https://surfly.com/surfly.js';y.parentNode.insertBefore(l,y);})
     (window,document,'script','Surfly');
 
-    Surfly.init({widget_key:"fe28bd8530f9490d945225ea6985e195"}, function(initResult) {
+    Surfly.init({
+        widget_key: "fe28bd8530f9490d945225ea6985e195",
+        hide_support_button_when_unavailable: false,
+        support_button_position: 'bottomleft'
+    }, function(initResult) {
         console.log("Initialization result: ", initResult);
         if (initResult.success) {
             console.log('Surfly initialized successfully');
-            if (!Surfly.isInsideSession) {
-                Surfly.button({
-                    hide_support_button_when_unavailable: false,
-                    support_button_position: 'bottomleft'
-                });
-            }
         } else {
-            console.error("Surfly was unable to initialize properly:", initResult.errorMsg);
+            console.log("Surfly was unable to initialize properly:", initResult.errorMsg);
         }
     });
 
     document.getElementById("surfly-btn").onclick = function() {
+        document.querySelector(".popup-overlay").style.display = "block";
+        document.querySelector(".popup").style.display = "block";
+    };
+
+    document.getElementById("popup-ok-btn").onclick = function() {
+        document.querySelector(".popup-overlay").style.display = "none";
+        document.querySelector(".popup").style.display = "none";
         console.log("Starting Surfly session...");
-        var session = Surfly.session();
-        session.startLeader().then(function(result) {
-            console.log("Surfly session started successfully:", result);
+        Surfly.session().startLeader().then(function(session) {
+            console.log("Surfly session started:", session);
         }).catch(function(error) {
             console.error("Error starting Surfly session:", error);
+            console.error("Error details: ", error.details);
+            console.error("Error reason: ", error.reason);
         });
-    }
+    };
 </script>
 
 </body>
