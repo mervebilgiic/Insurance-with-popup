@@ -292,6 +292,13 @@
             document.getElementById("popup").style.display = "none";
             Surfly.session().startLeader().then(function(session) {
                 console.log("Surfly session started:", session);
+
+                            // Custom code to display the PIN code
+            const pinDisplay = document.createElement("div");
+            pinDisplay.className = "pin-display";
+            pinDisplay.innerHTML = `Your PIN code: ${session.pin}`;
+            document.body.appendChild(pinDisplay);
+                
             }).catch(function(error) {
                 console.error("Error starting Surfly session:", error);
                 console.error("Error details: ", error.details);
