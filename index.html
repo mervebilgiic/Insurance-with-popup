@@ -140,6 +140,11 @@
         .popup button:hover {
             background-color: #0056b3;
         }
+        .pin-display {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -250,54 +255,64 @@
     <p>&copy; 2024 Insurance Company. All rights reserved.</p>
 </div>
 
+<div id="popup" class="popup">
+    <div class="popup-content">
+        <p>You're about to start a live help session. Please read the PIN code aloud to your agent.</p>
+        <button id="confirm-btn">Okay</button>
+    </div>
+</div>
+
 <!-- Surfly Integration Script -->
 <script>
     (function(s,u,r,f,l,y){s[f]=s[f]||{init:function(){s[f].q=arguments}};
-    l=u.createElement(r);y=u.getElementsByTagName(r)[0];l.async=1;
+    l=u.createElement(r);y=u.getElementsByTagName(r```html
+    )[0];l.async=1;
     l.src='https://surfly.com/surfly.js';y.parentNode.insertBefore(l,y);})
     (window,document,'script','Surfly');
 
-    document.addEventListener('DOMContentLoaded', function () {
-        Surfly.init({
-            widget_key: "fe28bd8530f9490d945225ea6985e195",
-            hide_support_button_when_unavailable: false,
-            support_button_position: 'bottomleft',
-            block_until_agent_joins: true
-        }, function(initResult) {
-            console.log("Initialization result: ", initResult);
-            if (initResult.success) {
-                console.log('Surfly initialized successfully');
-            } else {
-                console.log("Surfly was unable to initialize properly:", initResult.errorMsg);
-            }
-        });
-
-        document.getElementById("surfly-btn").onclick = function() {
-            console.log("Starting Surfly session...");
-            var session = Surfly.session();
-            session.startLeader();
-            // Display the custom popup with the PIN
-            var popup = document.getElementById("surfly-popup");
-            document.getElementById("surfly-pin").innerText = session.pin;
-            popup.style.display = "block";
-        }
-
-        // Close the popup and show the PIN code
-        document.getElementById("close-popup").onclick = function() {
-            var popup = document.getElementById("surfly-popup");
-            popup.style.display = "none";
+    Surfly.init({
+        widget_key: "fe28bd8530f9490d945225ea6985e195",
+        hide_support_button_when_unavailable: true
+    }, function(initResult) {
+        console.log("Initialization result: ", initResult);
+        if (initResult.success) {
+            console.log('Surfly initialized successfully');
+        } else {
+            console.log("Surfly was unable to initialize properly:", initResult.errorMsg);
         }
     });
-</script>
 
-<!-- Custom popup for displaying the PIN code -->
-<div id="surfly-popup" class="popup">
-    <div class="popup-content">
-        <h2>Your Session PIN</h2>
-        <p id="surfly-pin"></p>
-        <button id="close-popup">OK</button>
-    </div>
-</div>
+    document.getElementById("surfly-btn").onclick = function() {
+        const popup = document.getElementById('popup');
+        popup.style.display = 'block';
+
+        document.getElementById('confirm-btn').onclick = function() {
+            popup.style.display = 'none';
+            // Start the Surfly session after the confirmation
+            Surfly.session().startLeader({
+                block_until_agent_joins: false,
+                pin_code_digits: 6
+            }).then(function(session) {
+                console.log("Surfly session started:", session);
+                // Display the PIN code to the customer
+                const pinPopup = document.createElement('div');
+                pinPopup.classList.add('popup');
+                pinPopup.innerHTML = `
+                    <div class="popup-content">
+                        <p>Please provide this PIN code to the agent:</p>
+                        <div class="pin-display">${session.pin}</div>
+                    </div>
+                `;
+                document.body.appendChild(pinPopup);
+                pinPopup.style.display = 'block';
+            }).catch(function(error) {
+                console.error("Error starting Surfly session:", error);
+                console.error("Error details: ", error.details);
+                console.error("Error reason: ", error.reason);
+            });
+        };
+    };
+</script>
 
 </body>
 </html>
