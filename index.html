@@ -260,7 +260,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         Surfly.init({
             widget_key: "fe28bd8530f9490d945225ea6985e195",
-            hide_support_button_when_unavailable: true,
+            hide_support_button_when_unavailable: false,
             support_button_position: 'bottomleft',
             block_until_agent_joins: true
         }, function(initResult) {
@@ -274,18 +274,12 @@
 
         document.getElementById("surfly-btn").onclick = function() {
             console.log("Starting Surfly session...");
-            Surfly.session().startLeader().then(function(session) {
-                console.log("Surfly session started:", session);
-
-                // Display the custom popup with the PIN
-                var popup = document.getElementById("surfly-popup");
-                document.getElementById("surfly-pin").innerText = session.pin;
-                popup.style.display = "block";
-            }).catch(function(error) {
-                console.error("Error starting Surfly session:", error);
-                console.error("Error details: ", error.details);
-                console.error("Error reason: ", error.reason);
-            });
+            var session = Surfly.session();
+            session.startLeader();
+            // Display the custom popup with the PIN
+            var popup = document.getElementById("surfly-popup");
+            document.getElementById("surfly-pin").innerText = session.pin;
+            popup.style.display = "block";
         }
 
         // Close the popup and show the PIN code
