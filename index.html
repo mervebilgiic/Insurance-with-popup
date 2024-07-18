@@ -108,44 +108,37 @@
         a:hover {
             text-decoration: underline;
         }
-        /* Popup styles */
         .popup {
             display: none;
             position: fixed;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            padding: 20px;
-            z-index: 1000;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            text-align: center;
         }
         .popup-content {
-            margin-bottom: 15px;
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 300px;
+            border-radius: 8px;
         }
-        .popup .btn {
+        .popup button {
             background-color: #007bff;
-            color: #fff;
+            color: white;
             padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
             border: none;
             cursor: pointer;
             border-radius: 4px;
         }
-        .popup .btn:hover {
+        .popup button:hover {
             background-color: #0056b3;
-        }
-        .popup-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 999;
         }
     </style>
 </head>
@@ -257,27 +250,19 @@
     <p>&copy; 2024 Insurance Company. All rights reserved.</p>
 </div>
 
-<!-- Popup and overlay elements -->
-<div class="popup-overlay"></div>
-<div class="popup">
-    <div class="popup-content">
-        <p>Please read and accept the following before starting the session.</p>
-    </div>
-    <button class="btn" id="popup-ok-btn">OK</button>
-</div>
-
 <!-- Surfly Integration Script -->
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        (function(s,u,r,f,l,y){s[f]=s[f]||{init:function(){s[f].q=arguments}};
-        l=u.createElement(r);y=u.getElementsByTagName(r)[0];l.async=1;
-        l.src='https://surfly.com/surfly.js';y.parentNode.insertBefore(l,y);})
-        (window,document,'script','Surfly');
+    (function(s,u,r,f,l,y){s[f]=s[f]||{init:function(){s[f].q=arguments}};
+    l=u.createElement(r);y=u.getElementsByTagName(r)[0];l.async=1;
+    l.src='https://surfly.com/surfly.js';y.parentNode.insertBefore(l,y);})
+    (window,document,'script','Surfly');
 
+    document.addEventListener('DOMContentLoaded', function () {
         Surfly.init({
             widget_key: "fe28bd8530f9490d945225ea6985e195",
-            hide_support_button_when_unavailable: false,
-            support_button_position: 'bottomleft'
+            hide_support_button_when_unavailable: true,
+            support_button_position: 'bottomleft',
+            block_until_agent_joins: true
         }, function(initResult) {
             console.log("Initialization result: ", initResult);
             if (initResult.success) {
@@ -288,24 +273,37 @@
         });
 
         document.getElementById("surfly-btn").onclick = function() {
-            document.querySelector(".popup-overlay").style.display = "block";
-            document.querySelector(".popup").style.display = "block";
-        };
-
-        document.getElementById("popup-ok-btn").onclick = function() {
-            document.querySelector(".popup-overlay").style.display = "none";
-            document.querySelector(".popup").style.display = "none";
             console.log("Starting Surfly session...");
             Surfly.session().startLeader().then(function(session) {
                 console.log("Surfly session started:", session);
+
+                // Display the custom popup with the PIN
+                var popup = document.getElementById("surfly-popup");
+                document.getElementById("surfly-pin").innerText = session.pin;
+                popup.style.display = "block";
             }).catch(function(error) {
                 console.error("Error starting Surfly session:", error);
                 console.error("Error details: ", error.details);
                 console.error("Error reason: ", error.reason);
             });
-        };
+        }
+
+        // Close the popup and show the PIN code
+        document.getElementById("close-popup").onclick = function() {
+            var popup = document.getElementById("surfly-popup");
+            popup.style.display = "none";
+        }
     });
 </script>
+
+<!-- Custom popup for displaying the PIN code -->
+<div id="surfly-popup" class="popup">
+    <div class="popup-content">
+        <h2>Your Session PIN</h2>
+        <p id="surfly-pin"></p>
+        <button id="close-popup">OK</button>
+    </div>
+</div>
 
 </body>
 </html>
