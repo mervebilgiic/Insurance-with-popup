@@ -265,8 +265,8 @@
 <!-- Surfly Integration Script -->
 <script>
     (function(s,u,r,f,l,y){s[f]=s[f]||{init:function(){s[f].q=arguments}};
-    l=u.createElement(r);y=u.getElementsByTagName(r```html
-    )[0];l.async=1;
+    l=u.createElement(r);y=u.getElementsByTagName(r)[0];l.async=```html
+=1;
     l.src='https://surfly.com/surfly.js';y.parentNode.insertBefore(l,y);})
     (window,document,'script','Surfly');
 
@@ -290,8 +290,7 @@
             popup.style.display = 'none';
             // Start the Surfly session after the confirmation
             Surfly.session().startLeader({
-                block_until_agent_joins: false,
-                pin_code_digits: 6
+                block_until_agent_joins: false
             }).then(function(session) {
                 console.log("Surfly session started:", session);
                 // Display the PIN code to the customer
