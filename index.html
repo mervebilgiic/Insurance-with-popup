@@ -266,7 +266,6 @@
         console.log("Initialization result: ", initResult);
         if (initResult.success) {
             console.log('Surfly initialized successfully');
-            // The Surfly button will appear by default
         } else {
             console.log("Surfly was unable to initialize properly:", initResult.errorMsg);
         }
@@ -274,27 +273,19 @@
 
     document.getElementById("confirm-btn").onclick = function() {
         document.getElementById("popup").style.display = "none";
-        Surfly.session().startLeader().then(function(session) {
-            console.log("Surfly session started:", session);
-        }).catch(function(error) {
-            console.error("Error starting Surfly session:", error);
-            console.error("Error details: ", error.details);
-            console.error("Error reason: ", error.reason);
+        console.log("Starting Surfly session...");
+        Surfly.session().startLeader(function(err, session) {
+            if (err) {
+                console.error("Error starting Surfly session:", err);
+            } else {
+                console.log("Surfly session started:", session);
+            }
         });
     };
 
-    Surfly.on('session_pin', function(api, event) {
-        console.log('PIN code:', event.pin);
-    });
-
-    Surfly.on('session_started', function(api, event) {
-        if (Surfly.isInsideSession) {
-            Surfly.currentSession.on('session_pin', function(session, event) {
-                // Display the PIN only to the customer
-                alert('Please read this PIN code to your agent: ' + event.pin);
-            });
-        }
-    });
+    document.getElementById("surfly-btn").onclick = function() {
+        document.getElementById("popup").style.display = "block";
+    };
 </script>
 
 </body>
