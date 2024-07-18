@@ -262,25 +262,25 @@
     </div>
 </div>
 
-<!-- Surfly Integration Script -->
 <script>
+    // this is a surfly snippet
     (function(s,u,r,f,l,y){s[f]=s[f]||{init:function(){s[f].q=arguments}};
     l=u.createElement(r);y=u.getElementsByTagName(r)[0];l.async=1;
     l.src='https://surfly.com/surfly.js';y.parentNode.insertBefore(l,y);})
     (window,document,'script','Surfly');
 
-    Surfly.init({
-        widget_key: "fe28bd8530f9490d945225ea6985e195",
-        hide_support_button_when_unavailable: false,
-        support_button_position: 'bottomleft'
-    }, function(initResult) {
-        console.log("Initialization result: ", initResult);
+    Surfly.init({widget_key:"**your widget key here**"}, function(initResult) {
         if (initResult.success) {
-            console.log('Surfly initialized successfully');
-        } else {
-            console.log("Surfly was unable to initialize properly:", initResult.errorMsg);
+            // display the default Surfly button
+            if (!Surfly.isInsideSession) {
+                Surfly.button();
+            }
+        }
+        else {
+            console.log("Surfly was unable to initialize properly.")
         }
     });
+</script>
 
     document.getElementById("surfly-btn").onclick = function() {
         console.log("Starting Surfly session...");
