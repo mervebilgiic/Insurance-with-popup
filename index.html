@@ -269,34 +269,36 @@
     l.src='https://surfly.com/surfly.js';y.parentNode.insertBefore(l,y);})
     (window,document,'script','Surfly');
 
-    Surfly.init({
-        widget_key: "fe28bd8530f9490d945225ea6985e195",
-        hide_support_button_when_unavailable: false,
-        support_button_position: 'bottomleft'
-    }, function(initResult) {
-        console.log("Initialization result: ", initResult);
-        if (initResult.success) {
-            console.log('Surfly initialized successfully');
-        } else {
-            console.log("Surfly was unable to initialize properly:", initResult.errorMsg);
-        }
-    });
-
-    document.getElementById("surfly-btn").onclick = function() {
-        console.log("Starting Surfly session...");
-        document.getElementById("popup").style.display = "block";
-    };
-
-    document.getElementById("confirm-btn").onclick = function() {
-        document.getElementById("popup").style.display = "none";
-        Surfly.session().startLeader().then(function(session) {
-            console.log("Surfly session started:", session);
-        }).catch(function(error) {
-            console.error("Error starting Surfly session:", error);
-            console.error("Error details: ", error.details);
-            console.error("Error reason: ", error.reason);
+    document.addEventListener("DOMContentLoaded", function() {
+        Surfly.init({
+            widget_key: "fe28bd8530f9490d945225ea6985e195",
+            hide_support_button_when_unavailable: false,
+            support_button_position: 'bottomleft'
+        }, function(initResult) {
+            console.log("Initialization result: ", initResult);
+            if (initResult.success) {
+                console.log('Surfly initialized successfully');
+            } else {
+                console.log("Surfly was unable to initialize properly:", initResult.errorMsg);
+            }
         });
-    };
+
+        document.getElementById("surfly-btn").onclick = function() {
+            console.log("Starting Surfly session...");
+            document.getElementById("popup").style.display = "block";
+        };
+
+        document.getElementById("confirm-btn").onclick = function() {
+            document.getElementById("popup").style.display = "none";
+            Surfly.session().startLeader().then(function(session) {
+                console.log("Surfly session started:", session);
+            }).catch(function(error) {
+                console.error("Error starting Surfly session:", error);
+                console.error("Error details: ", error.details);
+                console.error("Error reason: ", error.reason);
+            });
+        };
+    });
 </script>
 
 </body>
